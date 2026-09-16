@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>명도복지관 주간보호센터</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Space+Grotesk:wght@400;500;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{--font-kr:'Noto Sans KR',sans-serif;--font-en:'Space Grotesk',sans-serif;--font-serif:'DM Serif Display',serif;}
+body{font-family:var(--font-kr);background:#1a1208;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;}
+.app{width:100%;max-width:430px;min-height:100vh;background:#faf8f3;position:relative;overflow:hidden;}
+.screen{display:none;}
+.screen.active{display:block;animation:fadeUp .3s cubic-bezier(.16,1,.3,1);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── Header ── */
+.header{padding:40px 24px 0;background:#faf8f3;}
+.header-brand{display:flex;align-items:flex-end;gap:8px;}
+.logo-text{font-family:var(--font-serif);font-style:italic;font-size:26px;color:#2a1a08;line-height:1;}
+.logo-badge{font-family:var(--font-en);font-size:9px;font-weight:700;letter-spacing:2px;background:#8b4513;color:#fff;padding:3px 8px;border-radius:30px;margin-bottom:4px;text-transform:uppercase;}
+.header-desc{margin-top:5px;font-size:12px;color:#8b6a40;}
+
+/* ── Stepbar ── */
+.stepbar{display:flex;align-items:center;padding:18px 24px 0;}
+.step-node{display:flex;flex-direction:column;align-items:center;gap:4px;}
+.step-circle{width:30px;height:30px;border-radius:50%;font-size:12px;font-weight:700;font-family:var(--font-en);display:flex;align-items:center;justify-content:center;transition:all .3s;}
+.step-circle.idle{background:#ede8e0;color:#bbb;}
+.step-circle.active{background:#8b4513;color:#fff;}
+.step-circle.done{background:#8b4513;color:#fff;font-size:14px;}
+.step-txt{font-size:9px;color:#bbb;font-weight:500;letter-spacing:.5px;}
+.step-txt.on{color:#8b4513;}
+.step-bar-line{flex:1;height:1px;background:#e0d8cc;margin-bottom:15px;}
+
+/* ── Section labels ── */
+.sec-row{display:flex;align-items:center;justify-content:space-between;padding:20px 24px 10px;}
+.sec-label{font-family:var(--font-en);font-size:10px;font-weight:700;letter-spacing:2px;color:#a08060;text-transform:uppercase;}
+.sec-tag{font-size:10px;background:#fdebd0;color:#c0622a;padding:3px 10px;border-radius:20px;font-weight:500;}
+.sec-tag.green{background:#d5f0e0;color:#2a8050;}
+
+/* ── Theme grid ── */
+.theme-container{padding:0 24px;}
+.theme-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.theme-card{border-radius:14px;overflow:hidden;cursor:pointer;position:relative;border:2.5px solid transparent;transition:border-color .2s,transform .15s;background:#fff;}
+.theme-card:active{transform:scale(.97);}
+.theme-card.selected{border-color:#8b4513;}
+.theme-card.selected .check-ring{display:flex;}
+.check-ring{display:none;position:absolute;top:8px;right:8px;width:20px;height:20px;border-radius:50%;background:#8b4513;align-items:center;justify-content:center;font-size:10px;color:#fff;z-index:3;}
+.best-badge{position:absolute;top:8px;left:8px;font-family:var(--font-en);font-size:8px;font-weight:700;letter-spacing:1px;background:#c0622a;color:#fff;padding:3px 8px;border-radius:20px;z-index:3;text-transform:uppercase;}
+.new-badge{position:absolute;top:8px;left:8px;font-family:var(--font-en);font-size:8px;font-weight:700;letter-spacing:1px;background:#7a4a8a;color:#fff;padding:3px 8px;border-radius:20px;z-index:3;text-transform:uppercase;}
+.theme-visual{height:120px;display:flex;flex-direction:column;gap:4px;padding:10px;position:relative;}
+.theme-row{display:flex;gap:4px;flex:1;}
+.theme-photo{flex:1;border-radius:6px;opacity:.85;}
+.theme-info{padding:9px 10px 10px;border-top:1px solid rgba(0,0,0,.05);}
+.theme-name{font-size:12px;font-weight:700;color:#2a1a08;margin-bottom:2px;}
+.theme-sub{font-size:10px;color:#a08060;}
+
+/* ── Theme pill scroll ── */
+.theme-more{margin-top:10px;overflow-x:auto;display:flex;gap:8px;padding-bottom:4px;scrollbar-width:none;}
+.theme-more::-webkit-scrollbar{display:none;}
+.theme-pill{flex:0 0 auto;display:flex;align-items:center;gap:6px;padding:7px 13px 7px 9px;border-radius:30px;border:1.5px solid #e0d8cc;background:#fff;cursor:pointer;white-space:nowrap;font-size:12px;color:#5a3a1a;transition:all .15s;}
+.theme-pill.selected{border-color:#8b4513;background:#8b4513;color:#fff;}
+.pill-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0;}
+
+/* ── Photo slots ── */
+.slots-wrap{padding:0 24px;}
+.slots-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.slot{aspect-ratio:3/4;border-radius:10px;background:#ede8e0;border:1.5px dashed #c8b89a;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;transition:all .2s;}
+.slot:hover{border-color:#8b4513;background:#e8dfd0;}
+.slot.filled{border-style:solid;border-color:#c8b89a;}
+.slot img{width:100%;height:100%;object-fit:cover;}
+.slot-icon{font-size:18px;color:#c8b89a;}
+.slot-n{font-size:9px;color:#c8b89a;margin-top:3px;}
+.slot-done{position:absolute;top:3px;right:3px;width:16px;height:16px;border-radius:50%;background:#8b4513;color:#fff;font-size:9px;display:flex;align-items:center;justify-content:center;}
+
+/* ── Preview strip ── */
+.preview-bg{margin:0 24px;border-radius:20px;background:#2a1a08;padding:22px 18px;display:flex;align-items:center;justify-content:center;gap:18px;position:relative;overflow:hidden;}
+.preview-bg::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(245,200,66,.1) 0%,transparent 60%),radial-gradient(ellipse at 70% 30%,rgba(200,100,30,.12) 0%,transparent 60%);pointer-events:none;}
+.strip-wrap{display:flex;flex-direction:column;align-items:center;gap:6px;position:relative;z-index:1;}
+.strip-outer{border-radius:10px;padding:8px 6px 14px;display:flex;flex-direction:column;gap:4px;width:100px;transition:background .4s ease;box-shadow:0 8px 30px rgba(0,0,0,.5);}
+.strip-slot{border-radius:4px;aspect-ratio:1;background:rgba(255,255,255,.08);overflow:hidden;}
+.strip-slot img{width:100%;height:100%;object-fit:cover;}
+.strip-label{font-family:var(--font-serif);font-style:italic;font-size:8px;text-align:center;margin-top:3px;transition:color .4s;letter-spacing:.5px;}
+.strip-outer.layout-grid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:4px;padding:6px 6px 12px;width:110px;}
+.strip-outer.layout-grid .strip-slot{aspect-ratio:1;}
+.strip-outer.layout-grid .strip-label{grid-column:1/-1;aspect-ratio:unset;background:none;}
+
+/* ── Layout buttons ── */
+.layout-btns{display:flex;flex-direction:column;gap:6px;position:relative;z-index:1;}
+.layout-btn{width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.layout-btn.active{background:rgba(255,255,255,.22);border-color:rgba(255,255,255,.5);}
+.layout-btn svg{width:18px;height:18px;}
+
+/* ── Buttons ── */
+.btn-area{padding:16px 24px 0;display:flex;flex-direction:column;gap:8px;}
+.btn-primary{width:100%;padding:15px;background:#8b4513;color:#fff;border:none;border-radius:14px;font-size:15px;font-weight:700;font-family:var(--font-kr);cursor:pointer;letter-spacing:-.2px;transition:opacity .2s,transform .15s;}
+.btn-primary:active{opacity:.85;transform:scale(.99);}
+.btn-primary:disabled{background:#d0c8ba;cursor:not-allowed;}
+.btn-ghost{width:100%;padding:13px;background:transparent;color:#5a3a1a;border:1.5px solid #d0c0a0;border-radius:14px;font-size:14px;font-family:var(--font-kr);cursor:pointer;transition:background .15s;}
+.btn-ghost:active{background:#f0e8dc;}
+.pb-safe{padding-bottom:32px;}
+
+/* ── Retouch sliders ── */
+.slider-row{margin-bottom:14px;}
+.slider-label{display:flex;justify-content:space-between;font-size:12px;color:#5a3a1a;margin-bottom:6px;font-weight:500;}
+.retSlider{width:100%;-webkit-appearance:none;height:4px;border-radius:4px;background:linear-gradient(to right,#8b4513 0%,#8b4513 50%,#e0d8cc 50%,#e0d8cc 100%);outline:none;cursor:pointer;}
+.retSlider::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:#8b4513;box-shadow:0 2px 8px rgba(0,0,0,.25);cursor:pointer;border:2px solid #fff;}
+.retSlider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#8b4513;border:2px solid #fff;cursor:pointer;}
+
+/* ── Filter cards ── */
+.filter-card{flex:0 0 72px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;}
+.filter-thumb{width:62px;height:62px;border-radius:12px;overflow:hidden;border:2.5px solid transparent;transition:border-color .2s,transform .15s;background:#ddd;}
+.filter-thumb canvas{width:100%;height:100%;display:block;}
+.filter-card.active .filter-thumb{border-color:#8b4513;}
+.filter-card:active .filter-thumb{transform:scale(.95);}
+.filter-name{font-size:10px;color:#8b6a40;font-weight:500;text-align:center;white-space:nowrap;}
+.filter-card.active .filter-name{color:#8b4513;font-weight:700;}
+.ret-thumb{width:56px;height:56px;border-radius:10px;overflow:hidden;border:2px solid transparent;cursor:pointer;flex-shrink:0;transition:border-color .2s;}
+.ret-thumb.active{border-color:#8b4513;}
+
+/* ── Save screen ── */
+.save-hero{padding:34px 24px 0;text-align:center;}
+.save-emoji{font-size:38px;margin-bottom:10px;}
+.save-ttl{font-size:21px;font-weight:700;color:#2a1a08;margin-bottom:5px;}
+.save-sub{font-size:13px;color:#8b6a40;}
+.save-strip-wrap{margin:22px 24px 0;background:#2a1a08;border-radius:20px;padding:26px 18px;display:flex;justify-content:center;position:relative;overflow:hidden;}
+.save-strip-wrap::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(245,200,66,.1) 0%,transparent 60%),radial-gradient(ellipse at 70% 30%,rgba(200,100,30,.12) 0%,transparent 60%);pointer-events:none;}
+.action-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:18px 24px 0;}
+.action-card{background:#fff;border-radius:14px;border:1px solid #ede8e0;padding:14px 8px;display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer;transition:all .15s;}
+.action-card:active{background:#f5f0e8;transform:scale(.97);}
+.action-icon{font-size:22px;}
+.action-lbl{font-size:11px;color:#5a3a1a;font-weight:500;}
+
+/* ── Toast ── */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(16px);background:rgba(42,26,8,.92);color:#f5e6c0;padding:10px 20px;border-radius:30px;font-size:13px;opacity:0;pointer-events:none;transition:all .3s ease;z-index:999;white-space:nowrap;backdrop-filter:blur(8px);}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+#fileInput{display:none;}
+
+/* 1. 사진 선택 단계 (상단 4개 슬롯) 이미지 전체 맞춤 */
+.slot img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important; /* 이미지 비율 유지 및 전체 표시 */
+  background-color: #ede8e0;      /* 남는 여백 배경색 설정 */
+}
+
+/* 2. 하단 미리보기 인생네컷 스트립 이미지 전체 맞춤 */
+.strip-slot img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important; /* 이미지 비율 유지 및 전체 표시 */
+  background-color: rgba(0, 0, 0, 0.2); /* 미리보기 스트립 여백 배경색 */
+}
+/* 1. 기본 1*4 레이아웃 프레임 크기 및 슬롯 비율 수정 */
+.strip-outer {
+  border-radius: 10px;
+  padding: 8px 6px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100px;
+  height: auto !important; /* 높이 자동 조절 */
+  transition: background .4s ease;
+  box-shadow: 0 8px 30px rgba(0,0,0,.5);
+}
+/* 1*4 및 2*2 프레임 내부 사진 잘림 방지 (기존 틀 비율 유지) */
+.strip-slot {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.strip-slot img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important; /* 이미지 비율 유지하며 틀 안에서 전체 보기 */
+  object-position: center !important; /* 중앙 정렬 */
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ═══ SCREEN 1: 메인 (테마 + 사진) ═══ -->
+<div class="screen active" id="scMain">
+
+  <div class="header">
+    <div class="header-brand">
+      <span class="logo-text">🌕명도복지관🌕<br>주간보호센터</span>
+      <span class="logo-badge">추억</span>
+    </div>
+    <p class="header-desc">🌕 추석의 소중한 순간을 네컷에 담아보세요</p>
+  </div>
+
+  <div class="stepbar">
+    <div class="step-node">
+      <div class="step-circle active" id="dot1"><span>1</span></div>
+      <div class="step-txt on" id="stxt1">테마</div>
+    </div>
+    <div class="step-bar-line"></div>
+    <div class="step-node">
+      <div class="step-circle idle" id="dot2"><span>2</span></div>
+      <div class="step-txt" id="stxt2">사진</div>
+    </div>
+    <div class="step-bar-line"></div>
+    <div class="step-node">
+      <div class="step-circle idle" id="dot3"><span>3</span></div>
+      <div class="step-txt" id="stxt3">보정</div>
+    </div>
+    <div class="step-bar-line"></div>
+    <div class="step-node">
+      <div class="step-circle idle" id="dot4"><span>4</span></div>
+      <div class="step-txt" id="stxt4">저장</div>
+    </div>
+  </div>
+
+  <div class="sec-row">
+    <span class="sec-label">Theme</span>
+    <span class="sec-tag">🏮 추석 특별판</span>
+  </div>
+
+  <div class="theme-container">
+    <div class="theme-grid">
+
+      <!-- 1. 달빛 보름 BEST -->
+      <div class="theme-card selected" data-theme="moonlight" onclick="pickTheme(this)">
+        <div class="best-badge">BEST</div>
+        <div class="check-ring" style="display:flex;">✓</div>
+        <div class="theme-visual" style="background:linear-gradient(160deg,#0d1b3e 0%,#1a2f5e 60%,#0a1228 100%);">
+          <div class="theme-row">
+            <div class="theme-photo" style="background:#1e3a6e;"></div>
+            <div class="theme-photo" style="background:#162d54;"></div>
+          </div>
+          <div class="theme-row">
+            <div class="theme-photo" style="background:#1a3460;"></div>
+            <div class="theme-photo" style="background:#0f2040;"></div>
+          </div>
+          <div style="position:absolute;top:10px;right:12px;width:22px;height:22px;border-radius:50%;background:#f5c842;box-shadow:0 0 10px #f5c842;opacity:.9;"></div>
+        </div>
+        <div class="theme-info" style="background:#0d1b3e;border-color:rgba(245,200,66,.15);">
+          <div class="theme-name" style="color:#f5c842;">달빛 보름</div>
+          <div class="theme-sub" style="color:#5a7ab0;">밤하늘 · 금빛 달</div>
+        </div>
+      </div>
+
+      <!-- 2. 황금 들녘 BEST -->
+      <div class="theme-card" data-theme="golden" onclick="pickTheme(this)">
+        <div class="best-badge">BEST</div>
+        <div class="check-ring">✓</div>
+        <div class="theme-visual" style="background:linear-gradient(160deg,#f5e6c0 0%,#e8d090 60%,#d4b870 100%);">
+          <div class="theme-row">
+            <div class="theme-photo" style="background:#d4aa60;"></div>
+            <div class="theme-photo" style="background:#c49850;"></div>
+          </div>
+          <div class="theme-row">
+            <div class="theme-photo" style="background:#e0bc78;"></div>
+            <div class="theme-photo" style="background:#c8a458;"></div>
+          </div>
+        </div>
+        <div class="theme-info" style="background:#f5e6c0;">
+          <div class="theme-name" style="color:#7a4a10;">황금 들녘</div>
+          <div class="theme-sub" style="color:#a07840;">풍요 · 황금빛 추수</div>
+        </div>
+      </div>
+
+      <!-- 3. 단풍 노을 NEW -->
+      <div class="theme-card" data-theme="maple" onclick="pickTheme(this)" style="background:#3d1a0a;">
+        <div class="new-badge">NEW</div>
+        <div class="check-ring">✓</div>
+        <div class="theme-visual" style="background:linear-gradient(160deg,#3d1a0a 0%,#6b2a10 50%,#2a0d04 100%);">
+          <div class="theme-row">
+            <div class="theme-photo" style="background:#8b3a18;"></div>
+            <div class="theme-photo" style="background:#6b2a10;"></div>
+          </div>
+          <div class="theme-row">
+            <div class="theme-photo" style="background:#a04820;"></div>
+            <div class="theme-photo" style="background:#7a3015;"></div>
+          </div>
+        </div>
+        <div class="theme-info" style="background:#3d1a0a;border-color:rgba(245,166,35,.1);">
+          <div class="theme-name" style="color:#f5a623;">단풍 노을</div>
+          <div class="theme-sub" style="color:#8b5a30;">가을 단풍 · 노을빛</div>
+        </div>
+      </div>
+
+      <!-- 4. 한복 크림 -->
+      <div class="theme-card" data-theme="hanbok" onclick="pickTheme(this)">
+        <div class="check-ring">✓</div>
+        <div class="theme-visual" style="background:linear-gradient(160deg,#e8f0ec 0%,#d4e4da 60%,#c0d8c8 100%);">
+          <div class="theme-row">
+            <div class="theme-photo" style="background:#b8d4c0;"></div>
+            <div class="theme-photo" style="background:#a8c8b0;"></div>
+          </div>
+          <div class="theme-row">
+            <div class="theme-photo" style="background:#c4dcc8;"></div>
+            <div class="theme-photo" style="background:#b0ccb8;"></div>
+          </div>
+        </div>
+        <div class="theme-info" style="background:#e8f0ec;">
+          <div class="theme-name" style="color:#3a6048;">한복 크림</div>
+          <div class="theme-sub" style="color:#7a9880;">전통 옥색 · 우아함</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- pill 추가 테마 -->
+    <div class="theme-more">
+      <div class="theme-pill" data-theme="baekja" onclick="pickPill(this)">
+        <div class="pill-dot" style="background:#f7f4ef;border:1px solid #d0c8b8;"></div>달항아리
+      </div>
+      <div class="theme-pill" data-theme="jesa" onclick="pickPill(this)">
+        <div class="pill-dot" style="background:linear-gradient(135deg,#2a1a2e,#4a2a10);"></div>차례상
+      </div>
+      <div class="theme-pill" data-theme="autumn" onclick="pickPill(this)">
+        <div class="pill-dot" style="background:#c8a882;border:1px solid #a08060;"></div>가을 산책
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-row" style="margin-top:4px;">
+    <span class="sec-label">Photos</span>
+    <span class="sec-tag green" id="photoCount">0 / 4 선택됨</span>
+  </div>
+
+  <div class="slots-wrap">
+    <div class="slots-grid" id="slotsGrid">
+      <div class="slot" onclick="openPick(0)"><div class="slot-icon">＋</div><div class="slot-n">1</div></div>
+      <div class="slot" onclick="openPick(1)"><div class="slot-icon">＋</div><div class="slot-n">2</div></div>
+      <div class="slot" onclick="openPick(2)"><div class="slot-icon">＋</div><div class="slot-n">3</div></div>
+      <div class="slot" onclick="openPick(3)"><div class="slot-icon">＋</div><div class="slot-n">4</div></div>
+    </div>
+  </div>
+
+  <div class="sec-row">
+    <span class="sec-label">Preview</span>
+    <span class="sec-label" style="color:#c8b89a;font-size:10px;">레이아웃 →</span>
+  </div>
+
+  <div class="preview-bg">
+    <div class="strip-wrap">
+      <div class="strip-outer" id="previewStrip">
+        <div class="strip-slot" id="ps0"></div>
+        <div class="strip-slot" id="ps1"></div>
+        <div class="strip-slot" id="ps2"></div>
+        <div class="strip-slot" id="ps3"></div>
+        <div class="strip-label" id="psLabel">🌕명도복지관🌕<br>주간보호센터</div>
+      </div>
+    </div>
+    <div class="layout-btns">
+      <div class="layout-btn active" onclick="setLayout('col')" title="세로형">
+        <svg viewBox="0 0 18 18" fill="none">
+          <rect x="3" y="2" width="12" height="3.5" rx="1" fill="rgba(255,255,255,.7)"/>
+          <rect x="3" y="7.25" width="12" height="3.5" rx="1" fill="rgba(255,255,255,.7)"/>
+          <rect x="3" y="12.5" width="12" height="3.5" rx="1" fill="rgba(255,255,255,.7)"/>
+        </svg>
+      </div>
+      <div class="layout-btn" onclick="setLayout('grid')" title="2×2">
+        <svg viewBox="0 0 18 18" fill="none">
+          <rect x="2" y="2" width="6.5" height="6.5" rx="1" fill="rgba(255,255,255,.7)"/>
+          <rect x="9.5" y="2" width="6.5" height="6.5" rx="1" fill="rgba(255,255,255,.7)"/>
+          <rect x="2" y="9.5" width="6.5" height="6.5" rx="1" fill="rgba(255,255,255,.7)"/>
+          <rect x="9.5" y="9.5" width="6.5" height="6.5" rx="1" fill="rgba(255,255,255,.7)"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-area pb-safe">
+    <button class="btn-primary" id="saveBtn" onclick="goRetouching()" disabled>✨ 보정하기</button>
+  </div>
+</div><!-- /scMain -->
+
+<!-- ═══ SCREEN 2: 보정 ═══ -->
+<div class="screen" id="scRetouch">
+  <div style="padding:24px 24px 0;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+      <button onclick="showScreen('scMain')" style="width:34px;height:34px;border-radius:50%;background:#ede8e0;border:none;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:#5a3a1a;">←</button>
+      <span style="font-size:17px;font-weight:700;color:#2a1a08;">✨ 사진 보정</span>
+    </div>
+    <p style="font-size:12px;color:#8b6a40;margin-left:44px;">필터를 선택하고 전/후를 비교해보세요</p>
+  </div>
+
+  <!-- 전/후 비교 -->
+  <div style="padding:14px 24px 0;">
+    <div id="compareWrap" style="position:relative;border-radius:16px;overflow:hidden;background:#2a1a08;aspect-ratio:1;width:100%;cursor:col-resize;box-shadow:0 8px 32px rgba(0,0,0,.25);user-select:none;-webkit-user-select:none;">
+      <canvas id="beforeCanvas" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"></canvas>
+      <canvas id="afterCanvas"  style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"></canvas>
+      <div id="divider" style="position:absolute;top:0;bottom:0;left:50%;width:2px;background:#f5c842;box-shadow:0 0 8px rgba(245,200,66,.5);transform:translateX(-50%);pointer-events:none;">
+        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:32px;height:32px;border-radius:50%;background:#f5c842;box-shadow:0 2px 12px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;font-size:13px;color:#5a3a1a;pointer-events:none;">⇔</div>
+      </div>
+      <div style="position:absolute;top:10px;left:12px;background:rgba(0,0,0,.55);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;pointer-events:none;letter-spacing:1px;">BEFORE</div>
+      <div style="position:absolute;top:10px;right:12px;background:rgba(245,200,66,.9);color:#2a1a08;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;pointer-events:none;letter-spacing:1px;">AFTER ✨</div>
+    </div>
+    <div style="text-align:center;margin-top:10px;">
+      <span id="filterAppliedName" style="font-size:12px;color:#8b6a40;">필터를 선택해주세요</span>
+    </div>
+  </div>
+
+  <!-- 필터 프리셋 -->
+  <div style="padding:14px 24px 0;">
+    <div style="font-family:var(--font-en);font-size:10px;font-weight:700;letter-spacing:2px;color:#a08060;text-transform:uppercase;margin-bottom:10px;">Filter Preset</div>
+    <div id="filterList" style="display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none;"></div>
+  </div>
+
+  <!-- 슬라이더 -->
+  <div style="padding:14px 24px 0;">
+    <div style="font-family:var(--font-en);font-size:10px;font-weight:700;letter-spacing:2px;color:#a08060;text-transform:uppercase;margin-bottom:12px;">Fine Tune</div>
+    <div class="slider-row">
+      <div class="slider-label"><span>☀️</span><span id="vBright">밝기 +20</span></div>
+      <input type="range" class="retSlider" id="sBright" min="-50" max="80" value="20" oninput="onSlider()">
+    </div>
+    <div class="slider-row">
+      <div class="slider-label"><span>🎨</span><span id="vSat">채도 +15</span></div>
+      <input type="range" class="retSlider" id="sSat" min="-50" max="80" value="15" oninput="onSlider()">
+    </div>
+    <div class="slider-row">
+      <div class="slider-label"><span>🌀</span><span id="vContrast">대비 +10</span></div>
+      <input type="range" class="retSlider" id="sContrast" min="-40" max="60" value="10" oninput="onSlider()">
+    </div>
+    <div class="slider-row">
+      <div class="slider-label"><span>🌡️</span><span id="vWarm">색온도 +10</span></div>
+      <input type="range" class="retSlider" id="sWarm" min="-60" max="60" value="10" oninput="onSlider()">
+    </div>
+    <div class="slider-row">
+      <div class="slider-label"><span>✨</span><span id="vGlow">글로우 30</span></div>
+      <input type="range" class="retSlider" id="sGlow" min="0" max="80" value="30" oninput="onSlider()">
+    </div>
+    <div class="slider-row">
+      <div class="slider-label"><span>🌸</span><span id="vSmooth">피부보정 40</span></div>
+      <input type="range" class="retSlider" id="sSmooth" min="0" max="100" value="40" oninput="onSlider()">
+    </div>
+  </div>
+
+  <!-- 섬네일 -->
+  <div style="padding:14px 24px 0;">
+    <div style="font-family:var(--font-en);font-size:10px;font-weight:700;letter-spacing:2px;color:#a08060;text-transform:uppercase;margin-bottom:10px;">Photos</div>
+    <div style="display:flex;gap:8px;" id="thumbRow"></div>
+  </div>
+
+  <div class="btn-area pb-safe" style="margin-top:16px;">
+    <button class="btn-primary" onclick="applyAllAndSave()">이 보정으로 저장하기 🌕</button>
+    <button class="btn-ghost" onclick="resetFilters()">보정 초기화</button>
+  </div>
+</div><!-- /scRetouch -->
+
+<!-- ═══ SCREEN 3: 저장 ═══ -->
+<div class="screen" id="scSave">
+  <div class="save-hero">
+    <div class="save-emoji">🌕</div>
+    <div class="save-ttl">추석 네컷 완성!</div>
+    <div class="save-sub">소중한 추억을 저장하거나 공유해보세요</div>
+  </div>
+  <div class="save-strip-wrap">
+    <div class="strip-outer" id="saveStrip" style="box-shadow:0 12px 40px rgba(0,0,0,.6);">
+      <div class="strip-slot" id="ss0"></div>
+      <div class="strip-slot" id="ss1"></div>
+      <div class="strip-slot" id="ss2"></div>
+      <div class="strip-slot" id="ss3"></div>
+      <div class="strip-label" id="ssLabel">🌕명도복지관🌕<br>주간보호센터</div>
+    </div>
+  </div>
+  <div class="action-grid">
+    <div class="action-card" onclick="downloadImg()">
+      <span class="action-icon">💾</span>
+      <span class="action-lbl">이미지 저장</span>
+    </div>
+    <div class="action-card" onclick="toKakao()">
+      <span class="action-icon">💬</span>
+      <span class="action-lbl">카카오톡</span>
+    </div>
+    <div class="action-card" onclick="toInsta()">
+      <span class="action-icon">📸</span>
+      <span class="action-lbl">인스타그램</span>
+    </div>
+  </div>
+  <div class="btn-area pb-safe" style="margin-top:8px;">
+    <button class="btn-ghost" onclick="restart()">처음부터 다시 만들기</button>
+  </div>
+  <canvas id="dlCanvas" style="display:none;"></canvas>
+</div><!-- /scSave -->
+
+</div><!-- /app -->
+<input type="file" id="fileInput" accept="image/*" onchange="onFile(event)">
+<div class="toast" id="toast"></div>
+
+<script>
+/* ══ THEMES ══ */
+const THEMES = {
+  moonlight:{ stripBg:'#0d1b3e', foot:'#f5c842' },
+  golden:   { stripBg:'#f5e6c0', foot:'#a0622a' },
+  maple:    { stripBg:'#3d1a0a', foot:'#f5a623' },
+  hanbok:   { stripBg:'#e8f0ec', foot:'#6b8f71' },
+  baekja:   { stripBg:'#f7f4ef', foot:'#b0a090' },
+  jesa:     { stripBg:'#2a1a2e', foot:'#d4a843' },
+  autumn:   { stripBg:'#c8a882', foot:'#5a3a1a' },
+};
+
+/* ══ FILTER PRESETS ══ */
+const FILTERS = [
+  { id:'studio',  name:'스튜디오', emoji:'✨', bright:28, sat:18, contrast:12, warm:12,  glow:40, smooth:55, desc:'밝고 화사하게' },
+  { id:'glow',    name:'글로우',   emoji:'🌟', bright:35, sat:10, contrast:5,  warm:18,  glow:65, smooth:60, desc:'빛나는 피부톤' },
+  { id:'natural', name:'내추럴',   emoji:'🌿', bright:18, sat:8,  contrast:8,  warm:8,   glow:20, smooth:35, desc:'자연스러운 보정' },
+  { id:'vivid',   name:'비비드',   emoji:'💎', bright:22, sat:40, contrast:20, warm:5,   glow:30, smooth:30, desc:'선명하고 또렷하게' },
+  { id:'film',    name:'필름',     emoji:'📷', bright:10, sat:-8, contrast:18, warm:20,  glow:15, smooth:20, desc:'필름 감성' },
+  { id:'cool',    name:'쿨톤',     emoji:'❄️', bright:25, sat:15, contrast:10, warm:-25, glow:35, smooth:45, desc:'시원한 쿨톤' },
+  { id:'warm',    name:'웜톤',     emoji:'🌅', bright:22, sat:20, contrast:8,  warm:35,  glow:28, smooth:40, desc:'따뜻한 웜톤' },
+  { id:'drama',   name:'드라마',   emoji:'🎬', bright:5,  sat:25, contrast:35, warm:-10, glow:20, smooth:25, desc:'무드있는 대비' },
+  { id:'pastel',  name:'파스텔',   emoji:'🩷', bright:38, sat:-12,contrast:-5, warm:15,  glow:50, smooth:65, desc:'파스텔 소프트' },
+  { id:'none',    name:'원본',     emoji:'🔲', bright:0,  sat:0,  contrast:0,  warm:0,   glow:0,  smooth:0,  desc:'보정 없음' },
+];
+
+/* ══ STATE ══ */
+let state = {
+  theme:'moonlight',
+  photos:[null,null,null,null],
+  retouched:[null,null,null,null],
+  activeSlot:-1, layout:'col', filterId:'studio',
+  comparePos:0.5, previewSlot:0,
+};
+
+/* ══ THEME ══ */
+function pickTheme(card){
+  document.querySelectorAll('.theme-card').forEach(c=>{
+    c.classList.remove('selected');
+    const cr=c.querySelector('.check-ring'); if(cr) cr.style.display='none';
+  });
+  document.querySelectorAll('.theme-pill').forEach(p=>p.classList.remove('selected'));
+  card.classList.add('selected');
+  const cr=card.querySelector('.check-ring'); if(cr) cr.style.display='flex';
+  state.theme=card.dataset.theme; applyTheme();
+}
+function pickPill(pill){
+  document.querySelectorAll('.theme-card').forEach(c=>{
+    c.classList.remove('selected');
+    const cr=c.querySelector('.check-ring'); if(cr) cr.style.display='none';
+  });
+  document.querySelectorAll('.theme-pill').forEach(p=>p.classList.remove('selected'));
+  pill.classList.add('selected'); state.theme=pill.dataset.theme; applyTheme();
+}
+function applyTheme(sId='previewStrip',lId='psLabel'){
+  const t=THEMES[state.theme];
+  const s=document.getElementById(sId); if(s) s.style.background=t.stripBg;
+  const l=document.getElementById(lId); if(l) l.style.color=t.foot;
+}
+
+/* ══ LAYOUT ══ */
+function setLayout(mode){
+  state.layout=mode;
+  document.querySelectorAll('.layout-btn').forEach((b,i)=>b.classList.toggle('active',(i===0&&mode==='col')||(i===1&&mode==='grid')));
+  const s=document.getElementById('previewStrip');
+  mode==='grid'?s.classList.add('layout-grid'):s.classList.remove('layout-grid');
+}
+
+/* ══ FILE PICKER ══ */
+function openPick(idx){ state.activeSlot=idx; document.getElementById('fileInput').click(); }
+function onFile(e){
+  const file=e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=ev=>{ setPhoto(state.activeSlot,ev.target.result); e.target.value=''; };
+  reader.readAsDataURL(file);
+}
+function setPhoto(idx,url){
+  state.photos[idx]=url; state.retouched[idx]=null;
+  const slots=document.querySelectorAll('.slot');
+  const s=slots[idx]; s.classList.add('filled');
+  s.innerHTML=`<img src="${url}" alt=""><div class="slot-done">✓</div>`;
+  s.onclick=()=>openPick(idx);
+  const ps=document.getElementById('ps'+idx); if(ps) ps.innerHTML=`<img src="${url}" alt="">`;
+  updateCount();
+}
+function updateCount(){
+  const n=state.photos.filter(Boolean).length;
+  document.getElementById('photoCount').textContent=n+' / 4 선택됨';
+  document.getElementById('saveBtn').disabled=n<4;
+  if(n>=2) setStep(2);
+}
+
+/* ══ STEPS ══ */
+function setStep(n){
+  for(let i=1;i<=4;i++){
+    const d=document.getElementById('dot'+i),t=document.getElementById('stxt'+i);
+    if(!d) continue;
+    d.innerHTML=i<n?'✓':'<span>'+i+'</span>';
+    d.className='step-circle '+(i<n?'done':i===n?'active':'idle');
+    t.className='step-txt'+(i<=n?' on':'');
+  }
+}
+
+/* ══ RETOUCH ENGINE ══ */
+function applyRetouchToImage(srcUrl,params){
+  return new Promise(resolve=>{
+    const img=new Image();
+    img.onload=()=>{
+      const W=img.naturalWidth||600, H=img.naturalHeight||600;
+      const c=document.createElement('canvas'); c.width=W; c.height=H;
+      const ctx=c.getContext('2d');
+      ctx.drawImage(img,0,0,W,H);
+      const id=ctx.getImageData(0,0,W,H), d=id.data;
+      const bright=params.bright;
+      const satScale=1+params.sat/100;
+      const conScale=(259*(params.contrast+255))/(255*(259-params.contrast));
+      const warmR=params.warm>0?params.warm*0.6:params.warm*0.3;
+      const warmB=params.warm>0?-params.warm*0.3:-params.warm*0.5;
+      for(let i=0;i<d.length;i+=4){
+        let r=d[i],g=d[i+1],b=d[i+2];
+        r+=bright; g+=bright; b+=bright;
+        r+=warmR; b+=warmB;
+        r=conScale*(r-128)+128; g=conScale*(g-128)+128; b=conScale*(b-128)+128;
+        const lum=0.299*r+0.587*g+0.114*b;
+        r=lum+(r-lum)*satScale; g=lum+(g-lum)*satScale; b=lum+(b-lum)*satScale;
+        if(params.smooth>0){
+          const l2=(r+g+b)/3;
+          if(l2>140){ const f=(params.smooth/100)*0.35; r=r*(1-f)+240*f; g=g*(1-f)+220*f; b=b*(1-f)+210*f; }
+        }
+        d[i]=Math.min(255,Math.max(0,r)); d[i+1]=Math.min(255,Math.max(0,g)); d[i+2]=Math.min(255,Math.max(0,b));
+      }
+      ctx.putImageData(id,0,0);
+      if(params.glow>0){
+        ctx.save(); ctx.globalAlpha=params.glow/300; ctx.filter='blur(18px) brightness(1.6)';
+        ctx.globalCompositeOperation='screen'; ctx.drawImage(img,0,0,W,H); ctx.restore();
+      }
+      if(params.smooth>0){
+        ctx.save(); ctx.globalAlpha=params.smooth/100*0.18;
+        ctx.filter=`blur(${Math.round(params.smooth/20)}px)`; ctx.drawImage(img,0,0,W,H); ctx.restore();
+      }
+      /* ★ 화질 유지: PNG로 저장 */
+      resolve(c.toDataURL('image/png'));
+    };
+    img.onerror=()=>resolve(srcUrl);
+    img.src=srcUrl;
+  });
+}
+
+function getParams(){
+  return{
+    bright:parseInt(document.getElementById('sBright').value),
+    sat:parseInt(document.getElementById('sSat').value),
+    contrast:parseInt(document.getElementById('sContrast').value),
+    warm:parseInt(document.getElementById('sWarm').value),
+    glow:parseInt(document.getElementById('sGlow').value),
+    smooth:parseInt(document.getElementById('sSmooth').value),
+  };
+}
+function updateSliderLabels(p){
+  const f=v=>(v>=0?'+':'')+v;
+  document.getElementById('vBright').textContent='밝기 '+f(p.bright);
+  document.getElementById('vSat').textContent='채도 '+f(p.sat);
+  document.getElementById('vContrast').textContent='대비 '+f(p.contrast);
+  document.getElementById('vWarm').textContent='색온도 '+f(p.warm);
+  document.getElementById('vGlow').textContent='글로우 '+p.glow;
+  document.getElementById('vSmooth').textContent='피부보정 '+p.smooth;
+  document.querySelectorAll('.retSlider').forEach(sl=>{
+    const mn=parseFloat(sl.min),mx=parseFloat(sl.max),vl=parseFloat(sl.value);
+    const pct=((vl-mn)/(mx-mn)*100).toFixed(1);
+    sl.style.background=`linear-gradient(to right,#8b4513 0%,#8b4513 ${pct}%,#e0d8cc ${pct}%,#e0d8cc 100%)`;
+  });
+}
+let sliderTimer=null;
+function onSlider(){ const p=getParams(); updateSliderLabels(p); clearTimeout(sliderTimer); sliderTimer=setTimeout(()=>renderCompare(state.previewSlot,p),120); }
+
+/* ══ 전후 비교 Canvas ══ */
+async function renderCompare(slotIdx,params){
+  const src=state.photos[slotIdx]; if(!src) return;
+  const wrap=document.getElementById('compareWrap');
+  const W=wrap.offsetWidth, H=wrap.offsetHeight||W;
+  await new Promise(res=>{
+    const bC=document.getElementById('beforeCanvas'); bC.width=W; bC.height=H;
+    const bX=bC.getContext('2d'); const img=new Image();
+    img.onload=()=>{ bX.drawImage(img,0,0,W,H); res(); }; img.src=src;
+  });
+  const retUrl=await applyRetouchToImage(src,params);
+  await new Promise(res=>{
+    const aC=document.getElementById('afterCanvas'); aC.width=W; aC.height=H;
+    const aX=aC.getContext('2d');
+    const splitX=Math.round(W*state.comparePos);
+    aX.clearRect(0,0,W,H); aX.save(); aX.beginPath(); aX.rect(splitX,0,W-splitX,H); aX.clip();
+    const img=new Image(); img.onload=()=>{ aX.drawImage(img,0,0,W,H); aX.restore(); res(); }; img.src=retUrl;
+  });
+  document.getElementById('divider').style.left=Math.round(W*state.comparePos)+'px';
+}
+
+function initCompareDrag(){
+  const wrap=document.getElementById('compareWrap'); let drag=false;
+  function move(x){ const r=wrap.getBoundingClientRect(); state.comparePos=Math.min(.95,Math.max(.05,(x-r.left)/r.width)); renderCompare(state.previewSlot,getParams()); }
+  wrap.addEventListener('mousedown',e=>{drag=true;move(e.clientX);});
+  wrap.addEventListener('touchstart',e=>{drag=true;move(e.touches[0].clientX);},{passive:true});
+  window.addEventListener('mousemove',e=>{if(drag)move(e.clientX);});
+  window.addEventListener('touchmove',e=>{if(drag)move(e.touches[0].clientX);},{passive:true});
+  window.addEventListener('mouseup',()=>drag=false);
+  window.addEventListener('touchend',()=>drag=false);
+}
+
+function buildThumbRow(){
+  const row=document.getElementById('thumbRow'); row.innerHTML='';
+  state.photos.forEach((src,i)=>{
+    if(!src) return;
+    const div=document.createElement('div'); div.className='ret-thumb'+(i===state.previewSlot?' active':'');
+    div.onclick=()=>{ state.previewSlot=i; document.querySelectorAll('.ret-thumb').forEach((t,j)=>t.classList.toggle('active',j===i)); renderCompare(i,getParams()); };
+    const img=document.createElement('img'); img.src=src; img.style.cssText='width:100%;height:100%;object-fit:cover;';
+    div.appendChild(img); row.appendChild(div);
+  });
+}
+
+function buildFilterList(){
+  const list=document.getElementById('filterList'); list.innerHTML='';
+  FILTERS.forEach(f=>{
+    const card=document.createElement('div'); card.className='filter-card'+(f.id===state.filterId?' active':'');
+    card.onclick=()=>applyFilter(f);
+    const thumb=document.createElement('div'); thumb.className='filter-thumb';
+    const cvs=document.createElement('canvas'); cvs.width=62; cvs.height=62; thumb.appendChild(cvs);
+    const src=state.photos[state.previewSlot]||state.photos.find(Boolean);
+    if(src){ applyRetouchToImage(src,f).then(url=>{ const i2=new Image(); i2.onload=()=>{ const cx=cvs.getContext('2d'); cx.drawImage(i2,0,0,62,62); }; i2.src=url; }); }
+    const nm=document.createElement('div'); nm.className='filter-name'; nm.textContent=f.emoji+' '+f.name;
+    card.appendChild(thumb); card.appendChild(nm); list.appendChild(card);
+  });
+}
+
+function applyFilter(f){
+  state.filterId=f.id;
+  document.getElementById('sBright').value=f.bright;
+  document.getElementById('sSat').value=f.sat;
+  document.getElementById('sContrast').value=f.contrast;
+  document.getElementById('sWarm').value=f.warm;
+  document.getElementById('sGlow').value=f.glow;
+  document.getElementById('sSmooth').value=f.smooth;
+  updateSliderLabels(f);
+  document.querySelectorAll('.filter-card').forEach((c,i)=>c.classList.toggle('active',FILTERS[i].id===f.id));
+  document.getElementById('filterAppliedName').textContent=f.emoji+' '+f.name+' — '+f.desc;
+  renderCompare(state.previewSlot,f);
+}
+function resetFilters(){ applyFilter(FILTERS.find(f=>f.id==='none')); }
+
+/* ══ 보정 화면 이동 ══ */
+function goRetouching(){
+  if(state.photos.filter(Boolean).length<4){ showToast('사진 4장을 모두 선택해주세요'); return; }
+  setStep(3); state.previewSlot=0; state.comparePos=.5;
+  showScreen('scRetouch');
+  applyFilter(FILTERS.find(f=>f.id==='studio'));
+  buildFilterList(); buildThumbRow(); initCompareDrag();
+  renderCompare(0,getParams());
+}
+
+/* ══ 보정 완료 → 저장 ══ */
+async function applyAllAndSave(){
+  showToast('보정 적용 중... ✨');
+  const p=getParams();
+  await Promise.all(state.photos.map((src,i)=>src?applyRetouchToImage(src,p).then(url=>{state.retouched[i]=url;}):Promise.resolve()));
+  goSave();
+}
+
+/* ══ 저장 화면 ══ */
+function goSave(){
+  setStep(4);
+  const ss=document.getElementById('saveStrip'), t=THEMES[state.theme];
+  ss.style.background=t.stripBg;
+  state.layout==='grid'?ss.classList.add('layout-grid'):ss.classList.remove('layout-grid');
+  document.getElementById('ssLabel').style.color=t.foot;
+  for(let i=0;i<4;i++){
+    const el=document.getElementById('ss'+i), url=state.retouched[i]||state.photos[i];
+    if(url) el.innerHTML=`<img src="${url}" alt="">`;
+  }
+  showScreen('scSave');
+}
+
+/* ══ 다운로드 (고해상도 PNG + 1×4 사진 전체 표시) ══ */
+function downloadImg(){
+  showToast('이미지 생성 중... 🌕');
+
+  const isGrid = state.layout === 'grid';
+  const W = 1080;
+  const PAD = Math.round(W * 0.045);
+  const GAP = Math.round(W * 0.015);
+  const FOOT = Math.round(W * 0.09);
+
+  // 2×2는 기존 비율을 유지하고, 1×4는 미리보기와 같은 정사각형 슬롯 4개를 담을 만큼 높게 생성
+  const photoW = W - PAD * 2;
+  const H = isGrid
+    ? Math.round(W * 1.15)
+    : PAD * 2 + photoW * 4 + GAP * 3 + FOOT;
+
+  const canvas = document.getElementById('dlCanvas');
+  canvas.width = W;
+  canvas.height = H;
+
+  const ctx = canvas.getContext('2d');
+  const t = THEMES[state.theme];
+
+  ctx.fillStyle = t.stripBg;
+  ctx.fillRect(0, 0, W, H);
+
+  const srcs = state.retouched.map((r, i) => r || state.photos[i]);
+  const imgEls = new Array(4);
+  let loaded = 0;
+
+  function finish(){
+    loaded++;
+    if(loaded === 4){
+      renderAndSave(ctx, imgEls, W, H, PAD, GAP, FOOT, isGrid, t, canvas);
+    }
+  }
+
+  srcs.forEach((src, i)=>{
+    if(!src){
+      imgEls[i] = null;
+      finish();
+      return;
+    }
+
+    const img = new Image();
+    img.onload = ()=>{
+      imgEls[i] = img;
+      finish();
+    };
+    img.onerror = ()=>{
+      imgEls[i] = null;
+      finish();
+    };
+    img.src = src;
+  });
+}
+
+function renderAndSave(ctx, imgs, W, H, PAD, GAP, FOOT, isGrid, t, canvas){
+  if(isGrid){
+    // 2×2: 기존처럼 프레임을 꽉 채움
+    const cW = (W - PAD * 2 - GAP) / 2;
+    const cH = (H - PAD * 2 - GAP - FOOT) / 2;
+
+    imgs.forEach((img, pos)=>{
+      const x = PAD + (pos % 2) * (cW + GAP);
+      const y = PAD + Math.floor(pos / 2) * (cH + GAP);
+
+      ctx.save();
+      ctx.beginPath();
+      if(ctx.roundRect) ctx.roundRect(x, y, cW, cH, W * 0.02);
+      else ctx.rect(x, y, cW, cH);
+      ctx.clip();
+
+      if(img) cover(ctx, img, x, y, cW, cH);
+      else{
+        ctx.fillStyle = 'rgba(255,255,255,.1)';
+        ctx.fillRect(x, y, cW, cH);
+      }
+      ctx.restore();
+    });
+  }else{
+    // 1×4: 미리보기의 정사각형 슬롯과 동일하게 만들고 사진은 contain으로 전체 표시
+    const photoSize = W - PAD * 2;
+
+    imgs.forEach((img, i)=>{
+      const x = PAD;
+      const y = PAD + i * (photoSize + GAP);
+
+      ctx.save();
+      ctx.beginPath();
+      if(ctx.roundRect) ctx.roundRect(x, y, photoSize, photoSize, W * 0.02);
+      else ctx.rect(x, y, photoSize, photoSize);
+      ctx.clip();
+
+      if(img) contain(ctx, img, x, y, photoSize, photoSize);
+      else{
+        ctx.fillStyle = 'rgba(255,255,255,.1)';
+        ctx.fillRect(x, y, photoSize, photoSize);
+      }
+      ctx.restore();
+    });
+  }
+
+  ctx.fillStyle = t.foot;
+  ctx.font = `italic bold ${FOOT * 0.45}px serif`;
+  ctx.textAlign = 'center';
+  ctx.font = `italic bold ${FOOT * 0.32}px serif`;
+    ctx.fillText('명도복지관', W / 2, H - FOOT * 0.48);
+    ctx.fillText('주간보호센터', W / 2, H - FOOT * 0.12);
+
+  trySave(canvas.toDataURL('image/png'));
+}
+
+// 프레임을 꽉 채우는 방식 — 2×2 기존 동작 유지
+function cover(ctx, img, x, y, w, h){
+  const scale = Math.max(w / img.width, h / img.height);
+  const drawW = img.width * scale;
+  const drawH = img.height * scale;
+  ctx.drawImage(img, x + (w - drawW) / 2, y + (h - drawH) / 2, drawW, drawH);
+}
+
+// 사진 전체를 보여주는 방식 — 1×4에서 사진 잘림 방지
+function contain(ctx, img, x, y, w, h){
+  const scale = Math.min(w / img.width, h / img.height);
+  const drawW = img.width * scale;
+  const drawH = img.height * scale;
+  ctx.drawImage(img, x + (w - drawW) / 2, y + (h - drawH) / 2, drawW, drawH);
+}
+
+
+/* ══ 저장 3단계 폴백 ══ */
+function dataURLtoBlob(dataUrl){
+  const[header,data]=dataUrl.split(',');
+  const mime=header.match(/:(.*?);/)[1];
+  const binary=atob(data); const arr=new Uint8Array(binary.length);
+  for(let i=0;i<binary.length;i++) arr[i]=binary.charCodeAt(i);
+  return new Blob([arr],{type:mime});
+}
+async function trySave(dataUrl){
+  if(navigator.share&&navigator.canShare){
+    try{
+      const blob=dataURLtoBlob(dataUrl);
+      const file=new File([blob],'명도복지관_주간보호센터.png',{type:'image/png'});
+      if(navigator.canShare({files:[file]})){await navigator.share({files:[file],title:'🌕명도복지관🌕 주간보호센터'}); showToast('✅ 공유 완료! 갤러리에 저장하세요'); return;}
+    }catch(e){if(e.name==='AbortError') return;}
+  }
+  try{
+    const a=document.createElement('a'); a.href=dataUrl; a.download='명도복지관_주간보호센터_'+Date.now()+'.png';
+    a.style.display='none'; document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    showToast('💾 다운로드 완료!'); return;
+  }catch(e){}
+  showSaveModal(dataUrl);
+}
+function showSaveModal(dataUrl){
+  const old=document.getElementById('saveModal'); if(old) old.remove();
+  const isIOS=/iPhone|iPad|iPod/.test(navigator.userAgent);
+  const isAnd=/Android/.test(navigator.userAgent);
+  let guide=isIOS?'길게 누르기 → <b>"사진 앱에 추가"</b>':isAnd?'길게 누르기 → <b>"이미지 저장"</b>':'이미지 우클릭 → <b>"이미지를 다른 이름으로 저장"</b>';
+  const modal=document.createElement('div');
+  modal.id='saveModal';
+  modal.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(10,6,2,.96);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;overflow-y:auto;padding:24px 20px 40px;';
+  modal.innerHTML=`<div style="width:100%;max-width:380px;display:flex;flex-direction:column;align-items:center;gap:16px;">
+    <div style="width:100%;display:flex;align-items:center;justify-content:space-between;">
+      <span style="color:#f5e6c0;font-size:16px;font-weight:700;font-family:sans-serif;">🌕 명도복지관 주간보호센터 저장</span>
+      <button id="mClose" style="background:rgba(245,200,66,.15);border:none;color:#f5c842;width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;">✕</button>
+    </div>
+    <div style="width:100%;background:rgba(245,200,66,.08);border:1px solid rgba(245,200,66,.2);border-radius:12px;padding:14px 16px;text-align:center;">
+      <p style="color:#f5e6c0;font-size:14px;font-family:sans-serif;margin-bottom:6px;">이미지를 <b>길게 눌러</b> 저장하세요</p>
+      <p style="color:#a08060;font-size:12px;font-family:sans-serif;">${guide}</p>
+    </div>
+    <div style="width:100%;background:#1a1208;border-radius:16px;padding:20px;display:flex;justify-content:center;">
+      <img src="${dataUrl}" style="max-width:100%;max-height:60vh;border-radius:10px;display:block;" alt="명도복지관 주간보호센터">
+    </div>
+    <a href="${dataUrl}" download="명도복지관_주간보호센터_${Date.now()}.png" style="width:100%;padding:14px;background:#f5c842;color:#2a1a08;border-radius:12px;font-size:15px;font-weight:700;font-family:sans-serif;text-align:center;text-decoration:none;display:block;box-sizing:border-box;">💾 PC에서 다운로드</a>
+    <p style="color:#5a3a1a;font-size:11px;font-family:sans-serif;text-align:center;line-height:1.6;">📱 모바일: 이미지 <b style="color:#a08060;">길게 누르기</b> → 저장<br>💻 PC: 아래 버튼 또는 이미지 우클릭 → 저장</p>
+  </div>`;
+  document.body.appendChild(modal);
+  document.getElementById('mClose').onclick=()=>modal.remove();
+  modal.addEventListener('click',e=>{if(e.target===modal)modal.remove();});
+  showToast('📱 이미지를 길게 눌러서 저장하세요!');
+}
+
+function toKakao(){ showToast('카카오 SDK 연동 후 사용 가능해요'); }
+function toInsta(){ downloadImg(); }
+
+/* ══ 화면 전환 ══ */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active'); window.scrollTo(0,0);
+}
+
+/* ══ 초기화 ══ */
+function restart(){
+  state={theme:'moonlight',photos:[null,null,null,null],retouched:[null,null,null,null],activeSlot:-1,layout:'col',filterId:'studio',comparePos:.5,previewSlot:0};
+  document.querySelectorAll('.slot').forEach((s,i)=>{
+    s.className='slot'; s.innerHTML=`<div class="slot-icon">＋</div><div class="slot-n">${i+1}</div>`; s.onclick=()=>openPick(i);
+  });
+  for(let i=0;i<4;i++){const ps=document.getElementById('ps'+i);if(ps)ps.innerHTML='';}
+  document.querySelector('[data-theme="moonlight"]').click();
+  document.getElementById('photoCount').textContent='0 / 4 선택됨';
+  document.getElementById('saveBtn').disabled=true;
+  setStep(1); showScreen('scMain');
+}
+
+/* ══ TOAST ══ */
+let _tt;
+function showToast(msg){ const el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show'); clearTimeout(_tt); _tt=setTimeout(()=>el.classList.remove('show'),2600); }
+
+/* ── INIT ── */
+applyTheme(); updateSliderLabels(getParams());
+</script>
+</body>
+</html>

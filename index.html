@@ -238,7 +238,7 @@ body{font-family:var(--font-kr);background:#1a1208;min-height:100vh;display:flex
           <div style="position:absolute;top:10px;right:12px;width:22px;height:22px;border-radius:50%;background:#f5c842;box-shadow:0 0 10px #f5c842;opacity:.9;"></div>
         </div>
         <div class="theme-info" style="background:#0d1b3e;border-color:rgba(245,200,66,.15);">
-          <div class="theme-name" style="color:#f5c842;">달빛 보름</div>
+          <div class="theme-name" style="color:#f5c842;">🌕 달빛 보름</div>
           <div class="theme-sub" style="color:#5a7ab0;">밤하늘 · 금빛 달</div>
         </div>
       </div>
@@ -258,7 +258,7 @@ body{font-family:var(--font-kr);background:#1a1208;min-height:100vh;display:flex
           </div>
         </div>
         <div class="theme-info" style="background:#f5e6c0;">
-          <div class="theme-name" style="color:#7a4a10;">황금 들녘</div>
+          <div class="theme-name" style="color:#7a4a10;">🌾 황금 들녘</div>
           <div class="theme-sub" style="color:#a07840;">풍요 · 황금빛 추수</div>
         </div>
       </div>
@@ -278,7 +278,7 @@ body{font-family:var(--font-kr);background:#1a1208;min-height:100vh;display:flex
           </div>
         </div>
         <div class="theme-info" style="background:#3d1a0a;border-color:rgba(245,166,35,.1);">
-          <div class="theme-name" style="color:#f5a623;">단풍 노을</div>
+          <div class="theme-name" style="color:#f5a623;">🍁 단풍 노을</div>
           <div class="theme-sub" style="color:#8b5a30;">가을 단풍 · 노을빛</div>
         </div>
       </div>
@@ -297,7 +297,7 @@ body{font-family:var(--font-kr);background:#1a1208;min-height:100vh;display:flex
           </div>
         </div>
         <div class="theme-info" style="background:#e8f0ec;">
-          <div class="theme-name" style="color:#3a6048;">한복 크림</div>
+          <div class="theme-name" style="color:#3a6048;">👘 한복 크림</div>
           <div class="theme-sub" style="color:#7a9880;">전통 옥색 · 우아함</div>
         </div>
       </div>
@@ -457,7 +457,7 @@ body{font-family:var(--font-kr);background:#1a1208;min-height:100vh;display:flex
       <div class="strip-slot" id="ss1"></div>
       <div class="strip-slot" id="ss2"></div>
       <div class="strip-slot" id="ss3"></div>
-      <div class="strip-label" id="ssLabel">🌕명도복지관🌕<br>주간보호센터</div>
+      <div class="strip-label" id="ssLabel">🌕 명도복지관 🌕<br>주간보호센터</div>
     </div>
   </div>
   <div class="action-grid">
@@ -487,13 +487,13 @@ body{font-family:var(--font-kr);background:#1a1208;min-height:100vh;display:flex
 <script>
 /* ══ THEMES ══ */
 const THEMES = {
-  moonlight:{ stripBg:'#0d1b3e', foot:'#f5c842' },
-  golden:   { stripBg:'#f5e6c0', foot:'#a0622a' },
-  maple:    { stripBg:'#3d1a0a', foot:'#f5a623' },
-  hanbok:   { stripBg:'#e8f0ec', foot:'#6b8f71' },
-  baekja:   { stripBg:'#f7f4ef', foot:'#b0a090' },
-  jesa:     { stripBg:'#2a1a2e', foot:'#d4a843' },
-  autumn:   { stripBg:'#c8a882', foot:'#5a3a1a' },
+  moonlight:{ stripBg:'#0d1b3e', foot:'#f5c842', emoji:'🌕✨' },
+  golden:   { stripBg:'#f5e6c0', foot:'#a0622a', emoji:'🌾✨' },
+  maple:    { stripBg:'#3d1a0a', foot:'#f5a623', emoji:'🍁🌅' },
+  hanbok:   { stripBg:'#e8f0ec', foot:'#6b8f71', emoji:'👘✨' },
+  baekja:   { stripBg:'#f7f4ef', foot:'#b0a090', emoji:'🤍✨' },
+  jesa:     { stripBg:'#2a1a2e', foot:'#d4a843', emoji:'🕯️✨' },
+  autumn:   { stripBg:'#c8a882', foot:'#5a3a1a', emoji:'🍂✨' },
 };
 
 /* ══ FILTER PRESETS ══ */
@@ -755,7 +755,9 @@ function goSave(){
   const ss=document.getElementById('saveStrip'), t=THEMES[state.theme];
   ss.style.background=t.stripBg;
   state.layout==='grid'?ss.classList.add('layout-grid'):ss.classList.remove('layout-grid');
-  document.getElementById('ssLabel').style.color=t.foot;
+  const ssLabel = document.getElementById('ssLabel');
+  ssLabel.style.color=t.foot;
+  ssLabel.innerHTML = `${t.emoji} 명도복지관 ${t.emoji}<br>주간보호센터`;
   for(let i=0;i<4;i++){
     const el=document.getElementById('ss'+i), url=state.retouched[i]||state.photos[i];
     if(url) el.innerHTML=`<img src="${url}" alt="">`;
@@ -866,12 +868,12 @@ function renderAndSave(ctx, imgs, W, H, PAD, GAP, FOOT, isGrid, t, canvas){
     });
   }
 
+  // 컨셉별 귀여운 이모지를 하단에 함께 표시
   ctx.fillStyle = t.foot;
-  ctx.font = `italic bold ${FOOT * 0.45}px serif`;
   ctx.textAlign = 'center';
-  ctx.font = `italic bold ${FOOT * 0.32}px serif`;
-    ctx.fillText('명도복지관', W / 2, H - FOOT * 0.48);
-    ctx.fillText('주간보호센터', W / 2, H - FOOT * 0.12);
+  ctx.font = `italic bold ${FOOT * 0.28}px serif`;
+  ctx.fillText(`${t.emoji}  명도복지관  ${t.emoji}`, W / 2, H - FOOT * 0.54);
+  ctx.fillText('주간보호센터', W / 2, H - FOOT * 0.18);
 
   trySave(canvas.toDataURL('image/png'));
 }

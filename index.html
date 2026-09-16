@@ -119,6 +119,7 @@ body{font-family:var(--font-kr);background:#1a1208;min-height:100vh;display:flex
 .strip-slot{border-radius:4px;aspect-ratio:1;background:rgba(255,255,255,.08);overflow:hidden;}
 .strip-slot img{width:100%;height:100%;object-fit:cover;}
 .strip-label{font-family:var(--font-serif);font-style:italic;font-size:8px;text-align:center;margin-top:3px;transition:color .4s;letter-spacing:.5px;}
+.strip-date{font-family:var(--font-en),sans-serif;font-style:normal;font-size:6px;letter-spacing:1px;opacity:.9;}
 .strip-outer.layout-grid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:4px;padding:6px 6px 12px;width:110px;}
 .strip-outer.layout-grid .strip-slot{aspect-ratio:1;}
 .strip-outer.layout-grid .strip-label{grid-column:1/-1;aspect-ratio:unset;background:none;}
@@ -383,7 +384,7 @@ body{font-family:var(--font-kr);background:#1a1208;min-height:100vh;display:flex
         <div class="strip-slot" id="ps1"></div>
         <div class="strip-slot" id="ps2"></div>
         <div class="strip-slot" id="ps3"></div>
-        <div class="strip-label" id="psLabel">명도복지관<br>주간보호센터</div>
+        <div class="strip-label" id="psLabel">명도복지관<br>주간보호센터<br><span class="strip-date">2026.09.23</span></div>
       </div>
     </div>
     <div class="layout-btns">
@@ -497,7 +498,7 @@ body{font-family:var(--font-kr);background:#1a1208;min-height:100vh;display:flex
       <div class="strip-slot" id="ss1"></div>
       <div class="strip-slot" id="ss2"></div>
       <div class="strip-slot" id="ss3"></div>
-      <div class="strip-label" id="ssLabel">명도복지관<br>주간보호센터</div>
+      <div class="strip-label" id="ssLabel">명도복지관<br>주간보호센터<br><span class="strip-date">2026.09.23</span></div>
     </div>
   </div>
   <div class="action-grid">
@@ -984,12 +985,14 @@ function renderAndSave(ctx, imgs, W, H, PAD, GAP, FOOT, isGrid, t, canvas){
   // 컨셉 장식은 사진보다 위에 표시: 달·별·곡식·단풍잎·한복 장식 등이 사진을 살짝 덮도록 구성
   drawThemeArtwork(ctx, t.mood, W, H, PAD, GAP, FOOT, isGrid);
 
-  // 컨셉별 귀여운 이모지를 하단에 함께 표시
+  // 하단 문구: 기관명 2줄 + 행사 날짜 1줄
   ctx.fillStyle = t.foot;
   ctx.textAlign = 'center';
-  ctx.font = `italic bold ${FOOT * 0.30}px serif`;
-  ctx.fillText('명도복지관', W / 2, H - FOOT * 0.54);
-  ctx.fillText('주간보호센터', W / 2, H - FOOT * 0.18);
+  ctx.font = `italic bold ${FOOT * 0.26}px serif`;
+  ctx.fillText('명도복지관', W / 2, H - FOOT * 0.62);
+  ctx.fillText('주간보호센터', W / 2, H - FOOT * 0.36);
+  ctx.font = `bold ${FOOT * 0.20}px sans-serif`;
+  ctx.fillText('2026.09.23', W / 2, H - FOOT * 0.10);
 
   trySave(canvas.toDataURL('image/png'));
 }

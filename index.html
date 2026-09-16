@@ -62,6 +62,44 @@ body{font-family:var(--font-kr);background:#1a1208;min-height:100vh;display:flex
 .theme-pill.selected{border-color:#8b4513;background:#8b4513;color:#fff;}
 .pill-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0;}
 
+/* ── Theme artwork / decorative frame ── */
+.strip-outer{position:relative;overflow:hidden;}
+.strip-outer > .strip-slot{position:relative;z-index:2;}
+.strip-outer > .strip-label{position:relative;z-index:4;}
+/* 사진보다 위에 장식을 표시하는 레이어 */
+.theme-art{position:absolute;inset:0;pointer-events:none;z-index:3;overflow:hidden;}
+.theme-art .dot,.theme-art .leaf,.theme-art .grain,.theme-art .petal,.theme-art .star,.theme-art .cloud,.theme-art .ribbon{position:absolute;display:block;}
+/* moonlight */
+.strip-outer.theme-moonlight{background:radial-gradient(circle at 50% 100%,#1d3768 0%,#0d1b3e 58%,#081126 100%) !important;}
+.theme-moonlight .theme-art .moon{position:absolute;width:18%;aspect-ratio:1;border-radius:50%;right:6%;top:2%;background:radial-gradient(circle at 35% 35%,#fff8cf 0 18%,#f5c842 48%,#d79d21 100%);box-shadow:0 0 18px rgba(245,200,66,.5);}
+.theme-moonlight .theme-art .star{width:3px;height:3px;border-radius:50%;background:#fff3b0;box-shadow:12px 14px #fff3b0,28px 6px #f5c842,-18px 24px #fff3b0,38px 35px #fff3b0,-32px 42px #f5c842;opacity:.9;}
+.theme-moonlight .theme-art .s1{left:8%;top:5%;}.theme-moonlight .theme-art .s2{right:20%;top:18%;transform:scale(.7);}
+/* golden field */
+.strip-outer.theme-golden{background:linear-gradient(180deg,#fff1c8 0%,#f0d38a 65%,#d6aa55 100%) !important;}
+.theme-golden .theme-art .sun{position:absolute;width:24%;aspect-ratio:1;border-radius:50%;right:3%;top:1%;background:#f4bd3f;box-shadow:0 0 20px rgba(244,189,63,.4);}
+.theme-golden .theme-art .grain{width:2px;height:34px;background:#a87826;transform-origin:bottom;border-radius:2px;}
+.theme-golden .theme-art .grain:before,.theme-golden .theme-art .grain:after{content:'';position:absolute;width:6px;height:2px;background:#d39b2f;border-radius:3px;left:-5px;top:7px;box-shadow:3px 8px #d39b2f, -2px 16px #d39b2f, 3px 24px #d39b2f;}
+.theme-golden .theme-art .g1{left:3%;bottom:2%;transform:rotate(-10deg)}.theme-golden .theme-art .g2{left:10%;bottom:1%;transform:rotate(7deg)}.theme-golden .theme-art .g3{right:4%;bottom:1%;transform:rotate(12deg)}.theme-golden .theme-art .g4{right:10%;bottom:2%;transform:rotate(-6deg)}
+/* maple sunset */
+.strip-outer.theme-maple{background:linear-gradient(180deg,#f58a55 0%,#d75b32 48%,#a43e20 76%,#6f2917 100%) !important;}
+.theme-maple .theme-art .sun{position:absolute;width:28%;aspect-ratio:1;border-radius:50%;right:5%;bottom:2%;background:#ffc95b;box-shadow:0 0 22px rgba(255,201,91,.55);}
+.theme-maple .theme-art .hill{position:absolute;left:-8%;right:-8%;bottom:-2%;height:20%;background:#7c321c;border-radius:50% 50% 0 0/100% 100% 0 0;opacity:.75;}
+.theme-maple .theme-art .leaf{width:16px;height:13px;background:#a62f18;clip-path:polygon(50% 0,62% 24%,100% 10%,78% 48%,98% 62%,58% 61%,50% 100%,42% 61%,2% 62%,22% 48%,0 10%,38% 24%);transform-origin:center;filter:drop-shadow(0 2px 2px rgba(75,20,5,.25));}
+.theme-maple .theme-art .leaf:after{content:'';position:absolute;left:50%;top:45%;width:1px;height:55%;background:#7b2413;transform:rotate(-8deg);}
+.theme-maple .theme-art .l1{left:1%;top:1%;transform:rotate(-18deg) scale(1.2);}.theme-maple .theme-art .l2{left:18%;top:4%;transform:rotate(24deg) scale(.75);background:#f0a33a}.theme-maple .theme-art .l3{right:2%;top:2%;transform:rotate(22deg);background:#c83f1f}.theme-maple .theme-art .l4{right:14%;top:17%;transform:rotate(-28deg) scale(.7);background:#f2b13e}.theme-maple .theme-art .l5{left:4%;bottom:9%;transform:rotate(30deg) scale(.8);background:#f0a33a}.theme-maple .theme-art .l6{right:4%;bottom:8%;transform:rotate(-18deg) scale(.9);background:#9f2b17}
+/* hanbok cream */
+.strip-outer.theme-hanbok{background:linear-gradient(180deg,#fbfaf4 0%,#e8f0ec 62%,#d2e2d7 100%) !important;}
+.theme-hanbok .theme-art .petal{width:9px;height:13px;background:#d9a6b5;border-radius:80% 20% 80% 20%;transform:rotate(35deg);opacity:.75;}
+.theme-hanbok .theme-art .p1{left:3%;top:4%}.theme-hanbok .theme-art .p2{right:5%;top:7%;transform:rotate(-25deg) scale(.8)}.theme-hanbok .theme-art .p3{left:8%;bottom:7%;transform:rotate(70deg) scale(.7);background:#9ebca6}.theme-hanbok .theme-art .p4{right:3%;bottom:10%;transform:rotate(-55deg);background:#e5c17b}
+.theme-hanbok .theme-art .ribbon{height:34%;width:14%;border:2px solid #d4a36a;border-left:0;border-radius:0 50% 50% 0;opacity:.45;top:2%;right:-2%;transform:rotate(7deg);}
+.theme-hanbok .theme-art .cloud{left:-4%;bottom:0;width:44%;height:11%;background:#fff;border-radius:50% 50% 0 0;opacity:.7;box-shadow:25px 2px 0 #fff,55px 4px 0 rgba(255,255,255,.7);}
+/* other themes */
+.strip-outer.theme-baekja{background:radial-gradient(circle at 50% 15%,#fff 0%,#f7f4ef 60%,#e8e1d7 100%) !important;}
+.strip-outer.theme-jesa{background:radial-gradient(circle at 50% 100%,#4a2a10 0%,#2a1a2e 58%,#170d1a 100%) !important;}
+.strip-outer.theme-autumn{background:linear-gradient(180deg,#d8b891,#b9794c 70%,#8d4f30) !important;}
+.theme-autumn .theme-art .leaf{width:13px;height:11px;background:#a94c25;clip-path:polygon(50% 0,100% 40%,60% 42%,100% 100%,50% 62%,0 100%,40% 42%,0 40%);}
+.theme-autumn .theme-art .a1{left:3%;top:3%;transform:rotate(-25deg)}.theme-autumn .theme-art .a2{right:4%;top:8%;transform:rotate(30deg);background:#e08b3f}.theme-autumn .theme-art .a3{left:5%;bottom:5%;transform:rotate(15deg);background:#7d3c24}
+
 /* ── Photo slots ── */
 .slots-wrap{padding:0 24px;}
 .slots-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
@@ -186,7 +224,7 @@ body{font-family:var(--font-kr);background:#1a1208;min-height:100vh;display:flex
 
   <div class="header">
     <div class="header-brand">
-      <span class="logo-text">🌕명도복지관🌕<br>주간보호센터</span>
+      <span class="logo-text">명도복지관<br>주간보호센터</span>
       <span class="logo-badge">추억</span>
     </div>
     <p class="header-desc">🌕 추석의 소중한 순간을 네컷에 담아보세요</p>
@@ -238,7 +276,7 @@ body{font-family:var(--font-kr);background:#1a1208;min-height:100vh;display:flex
           <div style="position:absolute;top:10px;right:12px;width:22px;height:22px;border-radius:50%;background:#f5c842;box-shadow:0 0 10px #f5c842;opacity:.9;"></div>
         </div>
         <div class="theme-info" style="background:#0d1b3e;border-color:rgba(245,200,66,.15);">
-          <div class="theme-name" style="color:#f5c842;">🌕 달빛 보름</div>
+          <div class="theme-name" style="color:#f5c842;">달빛 보름</div>
           <div class="theme-sub" style="color:#5a7ab0;">밤하늘 · 금빛 달</div>
         </div>
       </div>
@@ -258,7 +296,7 @@ body{font-family:var(--font-kr);background:#1a1208;min-height:100vh;display:flex
           </div>
         </div>
         <div class="theme-info" style="background:#f5e6c0;">
-          <div class="theme-name" style="color:#7a4a10;">🌾 황금 들녘</div>
+          <div class="theme-name" style="color:#7a4a10;">황금 들녘</div>
           <div class="theme-sub" style="color:#a07840;">풍요 · 황금빛 추수</div>
         </div>
       </div>
@@ -278,7 +316,7 @@ body{font-family:var(--font-kr);background:#1a1208;min-height:100vh;display:flex
           </div>
         </div>
         <div class="theme-info" style="background:#3d1a0a;border-color:rgba(245,166,35,.1);">
-          <div class="theme-name" style="color:#f5a623;">🍁 단풍 노을</div>
+          <div class="theme-name" style="color:#f5a623;">단풍 노을</div>
           <div class="theme-sub" style="color:#8b5a30;">가을 단풍 · 노을빛</div>
         </div>
       </div>
@@ -297,7 +335,7 @@ body{font-family:var(--font-kr);background:#1a1208;min-height:100vh;display:flex
           </div>
         </div>
         <div class="theme-info" style="background:#e8f0ec;">
-          <div class="theme-name" style="color:#3a6048;">👘 한복 크림</div>
+          <div class="theme-name" style="color:#3a6048;">한복 크림</div>
           <div class="theme-sub" style="color:#7a9880;">전통 옥색 · 우아함</div>
         </div>
       </div>
@@ -339,12 +377,13 @@ body{font-family:var(--font-kr);background:#1a1208;min-height:100vh;display:flex
 
   <div class="preview-bg">
     <div class="strip-wrap">
-      <div class="strip-outer" id="previewStrip">
+      <div class="strip-outer theme-moonlight" id="previewStrip">
+        <div class="theme-art" id="previewArt"></div>
         <div class="strip-slot" id="ps0"></div>
         <div class="strip-slot" id="ps1"></div>
         <div class="strip-slot" id="ps2"></div>
         <div class="strip-slot" id="ps3"></div>
-        <div class="strip-label" id="psLabel">🌕명도복지관🌕<br>주간보호센터</div>
+        <div class="strip-label" id="psLabel">명도복지관<br>주간보호센터</div>
       </div>
     </div>
     <div class="layout-btns">
@@ -452,12 +491,13 @@ body{font-family:var(--font-kr);background:#1a1208;min-height:100vh;display:flex
     <div class="save-sub">소중한 추억을 저장하거나 공유해보세요</div>
   </div>
   <div class="save-strip-wrap">
-    <div class="strip-outer" id="saveStrip" style="box-shadow:0 12px 40px rgba(0,0,0,.6);">
+    <div class="strip-outer theme-moonlight" id="saveStrip" style="box-shadow:0 12px 40px rgba(0,0,0,.6);">
+      <div class="theme-art" id="saveArt"></div>
       <div class="strip-slot" id="ss0"></div>
       <div class="strip-slot" id="ss1"></div>
       <div class="strip-slot" id="ss2"></div>
       <div class="strip-slot" id="ss3"></div>
-      <div class="strip-label" id="ssLabel">🌕 명도복지관 🌕<br>주간보호센터</div>
+      <div class="strip-label" id="ssLabel">명도복지관<br>주간보호센터</div>
     </div>
   </div>
   <div class="action-grid">
@@ -487,13 +527,13 @@ body{font-family:var(--font-kr);background:#1a1208;min-height:100vh;display:flex
 <script>
 /* ══ THEMES ══ */
 const THEMES = {
-  moonlight:{ stripBg:'#0d1b3e', foot:'#f5c842', emoji:'🌕✨' },
-  golden:   { stripBg:'#f5e6c0', foot:'#a0622a', emoji:'🌾✨' },
-  maple:    { stripBg:'#3d1a0a', foot:'#f5a623', emoji:'🍁🌅' },
-  hanbok:   { stripBg:'#e8f0ec', foot:'#6b8f71', emoji:'👘✨' },
-  baekja:   { stripBg:'#f7f4ef', foot:'#b0a090', emoji:'🤍✨' },
-  jesa:     { stripBg:'#2a1a2e', foot:'#d4a843', emoji:'🕯️✨' },
-  autumn:   { stripBg:'#c8a882', foot:'#5a3a1a', emoji:'🍂✨' },
+  moonlight:{ stripBg:'#0d1b3e', foot:'#f5c842', mood:'moonlight' },
+  golden:   { stripBg:'#f5e6c0', foot:'#8f6428', mood:'golden' },
+  maple:    { stripBg:'#d86f3d', foot:'#6b2d16', mood:'maple' },
+  hanbok:   { stripBg:'#e8f0ec', foot:'#50725b', mood:'hanbok' },
+  baekja:   { stripBg:'#f7f4ef', foot:'#8f8678', mood:'baekja' },
+  jesa:     { stripBg:'#2a1a2e', foot:'#d4a843', mood:'jesa' },
+  autumn:   { stripBg:'#c8a882', foot:'#5a3a1a', mood:'autumn' },
 };
 
 /* ══ FILTER PRESETS ══ */
@@ -538,10 +578,34 @@ function pickPill(pill){
   document.querySelectorAll('.theme-pill').forEach(p=>p.classList.remove('selected'));
   pill.classList.add('selected'); state.theme=pill.dataset.theme; applyTheme();
 }
+function buildThemeArt(targetId, theme){
+  const el=document.getElementById(targetId);
+  if(!el) return;
+  const common = theme==='moonlight'
+    ? '<span class="moon"></span><span class="star s1"></span><span class="star s2"></span>'
+    : theme==='golden'
+    ? '<span class="sun"></span><span class="grain g1"></span><span class="grain g2"></span><span class="grain g3"></span><span class="grain g4"></span>'
+    : theme==='maple'
+    ? '<span class="sun"></span><span class="hill"></span><span class="leaf l1"></span><span class="leaf l2"></span><span class="leaf l3"></span><span class="leaf l4"></span><span class="leaf l5"></span><span class="leaf l6"></span>'
+    : theme==='hanbok'
+    ? '<span class="petal p1"></span><span class="petal p2"></span><span class="petal p3"></span><span class="petal p4"></span><span class="ribbon"></span><span class="cloud"></span>'
+    : theme==='autumn'
+    ? '<span class="leaf a1"></span><span class="leaf a2"></span><span class="leaf a3"></span>'
+    : '';
+  el.innerHTML=common;
+}
 function applyTheme(sId='previewStrip',lId='psLabel'){
   const t=THEMES[state.theme];
-  const s=document.getElementById(sId); if(s) s.style.background=t.stripBg;
+  [document.getElementById('previewStrip'),document.getElementById('saveStrip')].forEach(s=>{
+    if(!s) return;
+    Object.keys(THEMES).forEach(k=>s.classList.remove('theme-'+k));
+    s.classList.add('theme-'+state.theme);
+    s.style.background=t.stripBg;
+  });
   const l=document.getElementById(lId); if(l) l.style.color=t.foot;
+  const sl=document.getElementById('ssLabel'); if(sl) sl.style.color=t.foot;
+  buildThemeArt('previewArt', state.theme);
+  buildThemeArt('saveArt', state.theme);
 }
 
 /* ══ LAYOUT ══ */
@@ -754,10 +818,13 @@ function goSave(){
   setStep(4);
   const ss=document.getElementById('saveStrip'), t=THEMES[state.theme];
   ss.style.background=t.stripBg;
+  Object.keys(THEMES).forEach(k=>ss.classList.remove('theme-'+k));
+  ss.classList.add('theme-'+state.theme);
+  buildThemeArt('saveArt', state.theme);
   state.layout==='grid'?ss.classList.add('layout-grid'):ss.classList.remove('layout-grid');
   const ssLabel = document.getElementById('ssLabel');
   ssLabel.style.color=t.foot;
-  ssLabel.innerHTML = `${t.emoji} 명도복지관 ${t.emoji}<br>주간보호센터`;
+  ssLabel.innerHTML = `명도복지관<br>주간보호센터`;
   for(let i=0;i<4;i++){
     const el=document.getElementById('ss'+i), url=state.retouched[i]||state.photos[i];
     if(url) el.innerHTML=`<img src="${url}" alt="">`;
@@ -822,7 +889,53 @@ function downloadImg(){
   });
 }
 
+function drawLeaf(ctx,x,y,size,angle,fill){
+  ctx.save(); ctx.translate(x,y); ctx.rotate(angle); ctx.fillStyle=fill;
+  ctx.beginPath();
+  ctx.moveTo(0,-size); ctx.lineTo(size*.55,-size*.25); ctx.lineTo(size,0);
+  ctx.lineTo(size*.55,size*.25); ctx.lineTo(0,size); ctx.lineTo(-size*.55,size*.25);
+  ctx.lineTo(-size,0); ctx.lineTo(-size*.55,-size*.25); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle='rgba(80,35,15,.35)'; ctx.lineWidth=Math.max(1,size*.08);
+  ctx.beginPath(); ctx.moveTo(0,size*.72); ctx.lineTo(0,-size*.6); ctx.stroke();
+  ctx.restore();
+}
+function drawThemeArtwork(ctx, theme, W, H, PAD, GAP, FOOT, isGrid){
+  const photoW=W-PAD*2;
+  const photoBottom=isGrid ? H-FOOT : PAD+photoW*4+GAP*3;
+  ctx.save();
+  if(theme==='moonlight'){
+    ctx.fillStyle='#f5c842'; ctx.shadowColor='rgba(245,200,66,.5)'; ctx.shadowBlur=28;
+    ctx.beginPath(); ctx.arc(W-PAD*.55, PAD*.48, PAD*.36,0,Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
+    ctx.fillStyle='#fff4b0';
+    [[PAD*.5,PAD*.35,5],[W-PAD*.3,PAD*.8,4],[PAD*.25,photoBottom*.42,4],[W-PAD*.35,photoBottom*.56,3]].forEach(([x,y,r])=>{ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();});
+    ctx.fillStyle='rgba(245,200,66,.7)'; ctx.font='bold 18px serif'; ctx.fillText('✦',PAD*.55,photoBottom*.12); ctx.fillText('✦',W-PAD*.7,photoBottom*.25);
+  } else if(theme==='golden'){
+    ctx.fillStyle='#f4bd3f'; ctx.shadowColor='rgba(244,189,63,.4)'; ctx.shadowBlur=28; ctx.beginPath();ctx.arc(W-PAD*.55,PAD*.5,PAD*.42,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
+    const ys=[photoBottom-12,photoBottom-24,photoBottom-7];
+    ys.forEach((y,i)=>{const x=PAD*.35+i*PAD*.35;ctx.strokeStyle='#9b6b22';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+PAD*.12,y-PAD*.8);ctx.stroke(); for(let k=0;k<4;k++){ctx.fillStyle='#d39b2f';ctx.beginPath();ctx.ellipse(x+PAD*.12+(k%2?3:-3),y-PAD*(.55+.16*k),5,2,-.4,0,Math.PI*2);ctx.fill();}});
+    for(let i=0;i<3;i++){const x=W-PAD*(.8+i*.35);ctx.strokeStyle='#9b6b22';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(x,photoBottom);ctx.lineTo(x-PAD*.12,photoBottom-PAD*.65);ctx.stroke();}
+  } else if(theme==='maple'){
+    ctx.fillStyle='#ffc95b';ctx.shadowColor='rgba(255,201,91,.55)';ctx.shadowBlur=30;ctx.beginPath();ctx.arc(W-PAD*.62,photoBottom-PAD*.2,PAD*.62,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
+    drawLeaf(ctx,PAD*.55,PAD*.55,PAD*.42,-.35,'#a62f18');
+    drawLeaf(ctx,PAD*1.5,PAD*.7,PAD*.27,.35,'#ef9b31');
+    drawLeaf(ctx,W-PAD*.5,PAD*.65,PAD*.35,.4,'#c83f1f');
+    drawLeaf(ctx,W-PAD*1.4,PAD*1.45,PAD*.22,-.5,'#f0ad3c');
+    drawLeaf(ctx,PAD*.55,photoBottom-PAD*.28,PAD*.28,.45,'#e98a2c');
+    drawLeaf(ctx,W-PAD*.5,photoBottom-PAD*.35,PAD*.3,-.25,'#9f2b17');
+    ctx.fillStyle='rgba(112,43,24,.65)';ctx.beginPath();ctx.moveTo(0,photoBottom);ctx.quadraticCurveTo(W*.35,photoBottom-PAD*.25,W*.7,photoBottom);ctx.quadraticCurveTo(W*.85,photoBottom-PAD*.2,W,photoBottom);ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.closePath();ctx.fill();
+  } else if(theme==='hanbok'){
+    const petals=[[PAD*.45,PAD*.55,'#d9a6b5'],[W-PAD*.55,PAD*.8,'#d9a6b5'],[PAD*.7,photoBottom-PAD*.35,'#9ebca6'],[W-PAD*.45,photoBottom-PAD*.25,'#e5c17b']];
+    petals.forEach(([x,y,c],i)=>{ctx.save();ctx.translate(x,y);ctx.rotate((i%2?-.4:.5));ctx.fillStyle=c;ctx.beginPath();ctx.ellipse(0,0,PAD*.18,PAD*.32,0,0,Math.PI*2);ctx.fill();ctx.restore();});
+    ctx.strokeStyle='rgba(190,140,75,.45)';ctx.lineWidth=3;ctx.beginPath();ctx.arc(W-PAD*.05,PAD*.65,PAD*.85,Math.PI*.45,Math.PI*1.55);ctx.stroke();
+    ctx.fillStyle='rgba(255,255,255,.7)';ctx.beginPath();ctx.ellipse(PAD*.2,photoBottom-PAD*.05,PAD*.75,PAD*.22,0,0,Math.PI*2);ctx.fill();
+  } else if(theme==='autumn'){
+    drawLeaf(ctx,PAD*.45,PAD*.55,PAD*.3,-.4,'#a94c25'); drawLeaf(ctx,W-PAD*.45,PAD*.75,PAD*.28,.5,'#e08b3f'); drawLeaf(ctx,PAD*.55,photoBottom-PAD*.25,PAD*.25,.2,'#7d3c24');
+  }
+  ctx.restore();
+}
+
 function renderAndSave(ctx, imgs, W, H, PAD, GAP, FOOT, isGrid, t, canvas){
+  // 먼저 사진을 그립니다. 이후 컨셉 장식을 다시 그려 사진 위에 올라오게 합니다.
   if(isGrid){
     // 2×2: 기존처럼 프레임을 꽉 채움
     const cW = (W - PAD * 2 - GAP) / 2;
@@ -868,11 +981,14 @@ function renderAndSave(ctx, imgs, W, H, PAD, GAP, FOOT, isGrid, t, canvas){
     });
   }
 
+  // 컨셉 장식은 사진보다 위에 표시: 달·별·곡식·단풍잎·한복 장식 등이 사진을 살짝 덮도록 구성
+  drawThemeArtwork(ctx, t.mood, W, H, PAD, GAP, FOOT, isGrid);
+
   // 컨셉별 귀여운 이모지를 하단에 함께 표시
   ctx.fillStyle = t.foot;
   ctx.textAlign = 'center';
-  ctx.font = `italic bold ${FOOT * 0.28}px serif`;
-  ctx.fillText(`${t.emoji}  명도복지관  ${t.emoji}`, W / 2, H - FOOT * 0.54);
+  ctx.font = `italic bold ${FOOT * 0.30}px serif`;
+  ctx.fillText('명도복지관', W / 2, H - FOOT * 0.54);
   ctx.fillText('주간보호센터', W / 2, H - FOOT * 0.18);
 
   trySave(canvas.toDataURL('image/png'));
@@ -975,6 +1091,9 @@ function showToast(msg){ const el=document.getElementById('toast'); el.textConte
 
 /* ── INIT ── */
 applyTheme(); updateSliderLabels(getParams());
+
+// 테마 장식 초기화
+window.addEventListener('DOMContentLoaded', ()=>applyTheme());
 </script>
 </body>
 </html>
